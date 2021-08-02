@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# To get random numbers
+${RANDOM}
+# Assign a variable to a random number
+PASSWORD="${RANDOM}"
+# Make the random number longer
+PASSWORD="${RANDOM}${RANDOM}"
+# Better random passowrd
+PASSWORD=$(date +%s)
+# Assign a variable to a sha256sum
+PASSWORD=$(date +%s | sha256sum)
+# Use head command to control the size of the data used to create the variable
+PASSWORD=$(date +%s | sha256sum | head -c32)
+# Use random numbers to make an even more random number
+PASSWORD=$(date +%s${RANDOM}${RANDOM} | sha256sum | head -32c)
+# shuf command will create random lines from a file or variable
+# fold command will change the length of a line
+fold -w1 # Will make the width of the line only 1 character
+# Create a string of special characters that will be random in a variable
+SPECIAL_CHARACTORS=$(echo '!@#$%^&*()_-=+' | fold -w1 | shuf | head -c1)
+# Append the password variable with a random special charcter
+echo "${PASSWORD}${SPECIAL_CHARACTORS}" 
+ 
+# Display what a user typed on the command line
+${0} # This is a positional parameter or first command entered on the command line
+${1} # This is the first argument typed after the first command
+# PATH is a list of directores in which the shell looks for commands
+which head # shows which directory will execute the head command
+hash -r # will forget all remembered locations
+basename # strips directory and suffix from file name (doesn't check to see if file exists)
+dirname # strips last file name out only list the directory portion (doesn't check either)
+# Special Parameters
+echo "${#}" # will show how man arguments were supplied on the command line
+if [[ "${#}" lt -1 ]]; then; exit 1; fi # will exit if arguments are less than 1
+${@} # Expands to teh positional parameters, starting from one.
+
+# usernames entered will be displayed along with a random password
+for USER_NAME in "${@}"
+do
+  PASSWORD=$(date +%s%N | sha256sum | head -c48)
+  echo "${USER_NAME}: ${PASSWORD}"
+done
+
